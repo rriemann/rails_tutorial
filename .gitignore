@@ -5,3 +5,4 @@ tmp/**/*
 tmp/*
 *~
 *.swp
+webrat.log
