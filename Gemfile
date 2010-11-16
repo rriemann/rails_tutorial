@@ -35,6 +35,9 @@ group :development do
   gem 'rspec-rails'
   gem 'annotate-models'
   gem 'faker', '0.3.1'
+  gem 'autotest-notification'
+  gem 'autotest-rails-pure'
+  gem 'autotest'
 end
 
 group :test do

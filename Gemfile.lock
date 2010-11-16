@@ -31,6 +31,10 @@ GEM
     annotate-models (1.0.4)
     arel (1.0.1)
       activesupport (~> 3.0.0)
+    autotest (4.4.4)
+    autotest-notification (2.3.1)
+      autotest (~> 4.3)
+    autotest-rails-pure (4.1.2)
     builder (2.1.2)
     diff-lcs (1.1.2)
     erubis (2.6.6)
@@ -96,6 +100,9 @@ PLATFORMS
 
 DEPENDENCIES
   annotate-models
+  autotest
+  autotest-notification
+  autotest-rails-pure
   factory_girl_rails
   faker (= 0.3.1)
   gravatar_image_tag
