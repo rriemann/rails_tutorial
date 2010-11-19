@@ -1,24 +1,30 @@
-class Micropost < ActiveRecord::Base
+class Micropost
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
   attr_accessible :content
 
-  belongs_to :user
+  field :user_id, :type => Integer
+  field :content, :type => String
+  index :created_at
+
+  referenced_in :user
 
   validates :content, :presence => true, :length => { :maximum => 140 }
   validates :user_id, :presence => true
 
-  default_scope :order => 'microposts.created_at DESC'
+  # default_scope :order => 'microposts.created_at DESC'
+  self.scope_stack << order_by(:created_at.desc)
 
   # Return microposts from the users being followed by the given user.
   scope :from_users_followed_by, lambda { |user| followed_by(user) }
 
   private
 
-  # Return an SQL condition for users followed by the given user.
-  # We include the user's own id as well.
   def self.followed_by(user)
-    followed_ids = %(SELECT followed_id FROM relationships
-                     WHERE follower_id = :user_id)
-    where("user_id IN (#{followed_ids}) OR user_id = :user_id",
-          { :user_id => user })
+#     followed_ids = %(SELECT followed_id FROM relationships
+#                      WHERE follower_id = :user_id)
+#     where("user_id IN (#{followed_ids}) OR user_id = :user_id",
+#           { :user_id => user })
   end
 end

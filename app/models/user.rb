@@ -12,7 +12,9 @@
 
 require 'digest'
 
-class User < ActiveRecord::Base
+class User
+  include Mongoid::Document
+
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation
 

@@ -1,8 +1,13 @@
-class Relationship < ActiveRecord::Base
+class Relationship
+  include Mongoid::Document
+
   attr_accessible :followed_id
 
-  belongs_to :follower, :class_name => "User"
-  belongs_to :followed, :class_name => "User"
+  field :follower_id, :type => Integer
+  field :followed_id, :type => Integer
+
+  referenced_in :follower, :class_name => "User"
+  referenced_in :followed, :class_name => "User"
 
   validates :follower_id, :presence => true
   validates :followed_id, :presence => true
