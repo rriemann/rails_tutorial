@@ -1,31 +1,24 @@
-# == Schema Information
-# Schema version: 20101015152412
-#
-# Table name: users
-#
-#  id         :integer         not null, primary key
-#  name       :string(255)
-#  email      :string(255)
-#  created_at :datetime
-#  updated_at :datetime
-#
-
 require 'digest'
 
 class User
   include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field :admin, :type => Boolean, :default => false
+  field :salt
+  field :encrypted_password
+  field :email
+  index :email, :unique => true
+  field :name
 
   attr_accessor :password
-  attr_accessible :name, :email, :password, :password_confirmation
+  attr_accessible :name, :email, :password, :password_confirmation, :admin
 
-  has_many :microposts, :dependent => :destroy
-  has_many :relationships, :foreign_key => "follower_id",
-                           :dependent => :destroy
-  has_many :following, :through => :relationships, :source => :followed
-  has_many :reverse_relationships, :foreign_key => "followed_id",
-                                   :class_name => "Relationship",
-                                   :dependent => :destroy
-  has_many :followers, :through => :reverse_relationships, :source => :follower
+  references_many :microposts, :dependent => :destroy
+#   references_many :following, :stored_as => :array, :inverse_of => :followed_by, :class_name => 'User' # :foreign_key => "following_id" #, :stored_as => :array, :inverse_of => :followed
+#   references_many :following, :stored_as => :array, :inverse_of => :followed_by
+
+
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -49,30 +42,43 @@ class User
 
 
   def self.authenticate(email, submitted_password)
-    user = find_by_email(email)
+    user = find :first, :conditions => {:email => email}
     return nil  if user.nil?
     return user if user.has_password?(submitted_password)
   end
 
   def self.authenticate_with_salt(id, cookie_salt)
-    user = find_by_id(id)
+    user = find(id)
     (user && user.salt == cookie_salt) ? user : nil
+  rescue Mongoid::Errors::DocumentNotFound
+    nil
+  end
+
+  def following
+    []
+  end
+
+  def followers
+    []
   end
 
   def following?(followed)
-    relationships.find_by_followed_id(followed)
+#     following.include? followed
+    nil
   end
 
   def follow!(followed)
-    relationships.create!(:followed_id => followed.id)
+#     following << followed
+    []
   end
 
   def unfollow!(followed)
-    relationships.find_by_followed_id(followed).destroy
+#     following.delete followed
+    nil
   end
 
   def feed
-    Micropost.from_users_followed_by(self)
+    microposts
   end
 
   private

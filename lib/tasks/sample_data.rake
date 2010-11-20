@@ -3,7 +3,7 @@ require 'faker'
 namespace :db do
   desc "Fill database with sample data"
   task :populate => :environment do
-    Rake::Task['db:reset'].invoke
+    Rake::Task['db:drop'].invoke
     make_users
     make_microposts
     make_relationships
@@ -15,7 +15,7 @@ def make_users
                        :email => "example@railstutorial.org",
                        :password => "foobar",
                        :password_confirmation => "foobar")
-  admin.toggle!(:admin)
+  admin.admin = true
   99.times do |n|
     name  = Faker::Name.name
     email = "example-#{n+1}@railstutorial.org"

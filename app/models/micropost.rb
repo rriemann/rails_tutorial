@@ -4,14 +4,12 @@ class Micropost
 
   attr_accessible :content
 
-  field :user_id, :type => Integer
   field :content, :type => String
   index :created_at
 
-  referenced_in :user
+  referenced_in :user, :inverse_of => :micropost
 
   validates :content, :presence => true, :length => { :maximum => 140 }
-  validates :user_id, :presence => true
 
   # default_scope :order => 'microposts.created_at DESC'
   self.scope_stack << order_by(:created_at.desc)
@@ -26,5 +24,7 @@ class Micropost
 #                      WHERE follower_id = :user_id)
 #     where("user_id IN (#{followed_ids}) OR user_id = :user_id",
 #           { :user_id => user })
+    following = User.only(:_id).in(:following => [user])
+    Micropost.where(:user.in => [following])
   end
 end
