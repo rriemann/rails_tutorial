@@ -10,6 +10,7 @@ class User
   field :email
   index :email, :unique => true
   field :name
+  field :following_ids, :type => Array, :default => []
 
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation, :admin
@@ -55,26 +56,25 @@ class User
   end
 
   def following
-    []
+    User.criteria.in({:id => self.following_ids})
   end
 
   def followers
-    []
+    User.where({:following_ids => self.id})
   end
 
   def following?(followed)
-#     following.include? followed
-    nil
+    self.following_ids.include? followed.id
   end
 
   def follow!(followed)
-#     following << followed
-    []
+    self.following_ids << followed.id
+    self.save!
   end
 
   def unfollow!(followed)
-#     following.delete followed
-    nil
+    self.following_ids.delete followed.id
+    self.save
   end
 
   def feed
