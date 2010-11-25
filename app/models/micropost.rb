@@ -15,5 +15,5 @@ class Micropost
   # self.scope_stack << order_by(:created_at.desc)
 
   # Return microposts from the users being followed by the given user.
-  scope :from_users_followed_by, lambda { |user| where(:user_id.in => user.following_ids << user.id).desc(:created_by) }
+  scope :from_users_followed_by, lambda { |user| where(:user_id.in => user.following_ids << user.id).desc(:created_at) }
 end

@@ -14,7 +14,7 @@ class User
   attr_accessor :password, :updating_password
   attr_accessible :name, :email, :password, :password_confirmation, :admin
 
-  references_many :microposts, :dependent => :destroy
+  references_many :microposts, :dependent => :destroy, :default_order => :created_at.desc
   references_many :following, :stored_as => :array, :class_name => 'User', :inverse_of => :followers
   references_many :followers, :stored_as => :array, :class_name => 'User', :inverse_of => :following
 
