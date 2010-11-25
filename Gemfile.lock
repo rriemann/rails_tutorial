@@ -38,6 +38,7 @@ GEM
     bson (1.1.2)
     bson_ext (1.1.2)
     builder (2.1.2)
+    database_cleaner (0.6.0)
     diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -112,6 +113,7 @@ DEPENDENCIES
   autotest-notification
   autotest-rails-pure
   bson_ext (= 1.1.2)
+  database_cleaner
   factory_girl_rails
   faker (= 0.3.1)
   gravatar_image_tag

@@ -11,7 +11,7 @@ describe User do
   end
 
   it "should create a new instance given valid attributes" do
-    User.create! @attr
+    u = User.create! @attr
   end
 
   it "should require a name" do
@@ -140,7 +140,8 @@ describe User do
     end
 
     it "should be convertible to an admin" do
-      @user.toggle!(:admin)
+#       @user.toggle!(:admin)
+      @user.admin = true
       @user.should be_admin
     end
   end
@@ -163,7 +164,7 @@ describe User do
     it "should destroy associated microposts" do
       @user.destroy
       [@mp1, @mp2].each do |micropost|
-        Micropost.find_by_id(micropost.id).should be_nil
+        lambda { Micropost.find(micropost.id) }.should raise_error Mongoid::Errors::DocumentNotFound
       end
     end
 
@@ -198,10 +199,6 @@ describe User do
       @followed = Factory(:user)
     end
 
-    it "should have a relationships method" do
-      @user.should respond_to(:relationships)
-    end
-
     it "should have a following method" do
       @user.should respond_to(:following)
     end
@@ -230,10 +227,6 @@ describe User do
       @user.follow!(@followed)
       @user.unfollow!(@followed)
       @user.should_not be_following(@followed)
-    end
-
-    it "should have a reverse_relationships method" do
-      @user.should respond_to(:reverse_relationships)
     end
 
     it "should have a followers method" do
