@@ -36,6 +36,9 @@ class UsersController < ApplicationController
   end
 
   def update
+    unless params[:user][:password].nil? or params[:user][:password].empty?
+      @user.updating_password = true
+    end
     if @user.update_attributes(params[:user])
       flash[:success] = "Profile updated."
       redirect_to @user

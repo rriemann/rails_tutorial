@@ -20,11 +20,6 @@ class Micropost
   private
 
   def self.followed_by(user)
-#     followed_ids = %(SELECT followed_id FROM relationships
-#                      WHERE follower_id = :user_id)
-#     where("user_id IN (#{followed_ids}) OR user_id = :user_id",
-#           { :user_id => user })
-    following = User.only(:_id).in(:following => [user])
-    Micropost.where(:user.in => [following])
+    Micropost.criteria.where(:user_id.in => user.following.only(:_id).map{|user| user.id} << user.id)
   end
 end

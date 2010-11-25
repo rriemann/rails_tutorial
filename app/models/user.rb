@@ -12,7 +12,7 @@ class User
   field :name
   field :following_ids, :type => Array, :default => []
 
-  attr_accessor :password
+  attr_accessor :password, :updating_password
   attr_accessible :name, :email, :password, :password_confirmation, :admin
 
   references_many :microposts, :dependent => :destroy
@@ -30,7 +30,8 @@ class User
                     :uniqueness => { :case_sensitive => false }
   validates :password, :presence     => true,
                        :confirmation => true,
-                       :length       => { :within => 6..40 }
+                       :length       => { :within => 6..40 },
+                       :if => :should_validate_password?
 
   before_save :encrypt_password
 
@@ -56,11 +57,11 @@ class User
   end
 
   def following
-    User.criteria.in({:id => self.following_ids})
+    User.where(:_id.in => self.following_ids)
   end
 
   def followers
-    User.where({:following_ids => self.id})
+    User.where(:following_ids => self.id)
   end
 
   def following?(followed)
@@ -74,18 +75,24 @@ class User
 
   def unfollow!(followed)
     self.following_ids.delete followed.id
-    self.save
+    self.save!
   end
 
   def feed
-    microposts
+    Micropost.from_users_followed_by(self)
+  end
+
+  def should_validate_password?
+    updating_password || new_record?
   end
 
   private
 
     def encrypt_password
-      self.salt = make_salt if new_record?
-      self.encrypted_password = encrypt(password)
+      if should_validate_password?
+        self.salt = make_salt if new_record?
+        self.encrypted_password = encrypt(password)
+      end
     end
 
     def encrypt(string)
