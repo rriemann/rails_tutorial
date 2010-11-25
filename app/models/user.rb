@@ -63,8 +63,10 @@ class User
   end
 
   def unfollow! user
-    following.delete user
-    self.save
+    following_ids.delete user.id
+    user.follower_ids.delete self.id
+    user.save!
+    self.save!
   end
 
   def feed

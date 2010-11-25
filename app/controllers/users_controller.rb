@@ -37,11 +37,34 @@ class UsersController < ApplicationController
 
   def update
     if params[:commit] =~ /unfollow/i
-      flash.now[:message] = "got #{params[:commit]} and #{params[:user][:unfollow_id]}"
-      current_user.unfollow! User.find(params[:user][:unfollow_id])
+      follow = User.find(params[:user][:unfollow_id])
+      if follow and current_user.unfollow! follow
+        respond_to do |format|
+          format.html do
+            flash[:success] = "You don't follow #{follow.name} anymore."
+            redirect_to follow
+          end
+          format.js { render 'destroy.follow', :locals => { :follow_user => follow } }
+        end
+      else
+        flash[:error] = "An occoured an error."
+        redirect_to user
+      end
       return
     elsif params[:commit] =~ /follow/i
-      current_user.follow! User.find(params[:user][:follow_id])
+      follow = User.find(params[:user][:follow_id])
+      if follow and current_user.follow! follow
+        respond_to do |format|
+          format.html do
+            flash[:success] = "You follow #{follow.name} from now on."
+            redirect_to follow
+          end
+          format.js { render 'create.follow', :locals => { :follow_user => follow } }
+        end
+      else
+        flash[:error] = "An occoured an error."
+        redirect_to user
+      end
       return
     end
 

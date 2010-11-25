@@ -1,0 +1,2 @@
+$("follow_form").update("<%= escape_javascript(render :partial => 'follow', :locals => {:follow_user => follow_user}) %>")
+$("followers").update('<%= "#{follow_user.followers.count} followers" %>')
