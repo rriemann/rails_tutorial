@@ -10,16 +10,13 @@ class User
   field :email
   index :email, :unique => true
   field :name
-  field :following_ids, :type => Array, :default => []
 
   attr_accessor :password, :updating_password
   attr_accessible :name, :email, :password, :password_confirmation, :admin
 
   references_many :microposts, :dependent => :destroy
+  references_many :following, :stored_as => :array, :class_name => 'User'
 #   references_many :following, :stored_as => :array, :inverse_of => :followed_by, :class_name => 'User' # :foreign_key => "following_id" #, :stored_as => :array, :inverse_of => :followed
-#   references_many :following, :stored_as => :array, :inverse_of => :followed_by
-
-
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -57,24 +54,24 @@ class User
   end
 
   def following
-    User.where(:_id.in => self.following_ids)
+    [] #User.where(:_id.in => self.following_ids)
   end
 
   def followers
-    User.where(:following_ids => self.id)
+    [] #User.where(:following_ids => self.id)
   end
 
   def following?(followed)
-    self.following_ids.include? followed.id
+#     self.following_ids.include? followed.id
   end
 
   def follow!(followed)
-    self.following_ids << followed.id
+#     following << followed
     self.save!
   end
 
   def unfollow!(followed)
-    self.following_ids.delete followed.id
+#     following.delete followed
     self.save!
   end
 
