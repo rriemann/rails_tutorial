@@ -15,8 +15,8 @@ class User
   attr_accessible :name, :email, :password, :password_confirmation, :admin
 
   references_many :microposts, :dependent => :destroy
-  references_many :following, :stored_as => :array, :class_name => 'User'
-#   references_many :following, :stored_as => :array, :inverse_of => :followed_by, :class_name => 'User' # :foreign_key => "following_id" #, :stored_as => :array, :inverse_of => :followed
+  references_many :following, :stored_as => :array, :class_name => 'User', :inverse_of => :followers
+  references_many :followers, :stored_as => :array, :class_name => 'User', :inverse_of => :following
 
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
@@ -53,26 +53,18 @@ class User
     nil
   end
 
-  def following
-    [] #User.where(:_id.in => self.following_ids)
+  def follow! user
+    following << user
+    self.save
   end
 
-  def followers
-    [] #User.where(:following_ids => self.id)
+  def following? user
+    following_ids.include? user.id
   end
 
-  def following?(followed)
-#     self.following_ids.include? followed.id
-  end
-
-  def follow!(followed)
-#     following << followed
-    self.save!
-  end
-
-  def unfollow!(followed)
-#     following.delete followed
-    self.save!
+  def unfollow! user
+    following.delete user
+    self.save
   end
 
   def feed

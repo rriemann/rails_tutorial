@@ -36,6 +36,15 @@ class UsersController < ApplicationController
   end
 
   def update
+    if params[:commit] =~ /unfollow/i
+      flash.now[:message] = "got #{params[:commit]} and #{params[:user][:unfollow_id]}"
+      current_user.unfollow! User.find(params[:user][:unfollow_id])
+      return
+    elsif params[:commit] =~ /follow/i
+      current_user.follow! User.find(params[:user][:follow_id])
+      return
+    end
+
     unless params[:user][:password].nil? or params[:user][:password].empty?
       @user.updating_password = true
     end

@@ -20,6 +20,6 @@ class Micropost
   private
 
   def self.followed_by(user)
-    Micropost.criteria.where(:user_id.in => user.following.only(:_id).map{|user| user.id} << user.id)
+    Micropost.criteria.where(:user_id.in => user.following_ids << user.id)
   end
 end
