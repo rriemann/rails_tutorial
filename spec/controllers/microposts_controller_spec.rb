@@ -72,7 +72,7 @@ describe MicropostsController do
       end
 
       it "should deny access" do
-        delete :destroy, :id => @micropost
+        delete :destroy, :id => @micropost.id
         response.should redirect_to(root_path)
       end
     end
@@ -85,7 +85,7 @@ describe MicropostsController do
 
       it "should destroy the micropost" do
         lambda do
-          delete :destroy, :id => @micropost
+          delete :destroy, :id => @micropost.id
         end.should change(Micropost, :count).by(-1)
       end
     end
