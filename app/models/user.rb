@@ -47,6 +47,7 @@ class User
   end
 
   def self.authenticate_with_salt(id, cookie_salt)
+    return nil if id.nil?
     user = find(id)
     (user && user.salt == cookie_salt) ? user : nil
   rescue Mongoid::Errors::DocumentNotFound
